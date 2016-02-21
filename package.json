@@ -1,0 +1,38 @@
+{
+  "name": "sos",
+  "version": "1.0.0",
+  "description": "StackOverflow Search",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felipenmoura/sos-stackoverflow-search.git"
+  },
+  "keywords": [
+    "Stackoverflow",
+    "search",
+    "repl",
+    "cli",
+    "command-line",
+    "help"
+  ],
+  "author": "Felipe N. Moura <felipenmoura@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/felipenmoura/sos-stackoverflow-search/issues"
+  },
+  "homepage": "https://github.com/felipenmoura/sos-stackoverflow-search#readme",
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "babelify": "^6.2.0",
+    "cardinal": "^0.6.0",
+    "cli-color": "^1.1.0",
+    "dom-parser": "^0.1.5",
+    "inquirer": "^0.12.0",
+    "marked": "^0.3.5",
+    "marked-terminal": "^1.6.1",
+    "node-fetch": "^1.3.3"
+  }
+}
