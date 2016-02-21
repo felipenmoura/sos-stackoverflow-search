@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const loading = require('./loader.js');
 
 function goGet (src, questions=true) {
+    console.log('');
     loading(true);
     return new Promise(function(resolve, reject){
         fetch(src).then(function(result){
