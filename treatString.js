@@ -47,11 +47,8 @@ module.exports = function treatString (str) {
     if (codes && codes.length) {
         let replacement = "";
         codes.forEach(function(cur){
-            codes.forEach(function(cur){
-                replacement = cliColor.bgWhite.black(cur.replace(/\<(\/)?code\>/g, ''));
-            });
-            
-            finalStr = finalStr.replace(/\<code\>(.+?(?=\<\/code\>))\<\/code\>/g, replacement);
+            replacement = cliColor.bgWhite.black(cur.replace(/\<(\/)?code\>/g, ''));
+            finalStr = finalStr.replace(cur, replacement);
         });
     }
     
