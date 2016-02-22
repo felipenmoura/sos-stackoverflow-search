@@ -6,7 +6,7 @@ var loading = require('./loader.js');
 function goGet(src) {
     var questions = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
 
-    console.log('');
+    //console.log('');
     loading(true);
     return new Promise(function (resolve, reject) {
         fetch(src).then(function (result) {

@@ -36,13 +36,17 @@ module.exports = function listQuestions(html) {
             }
         }
 
-        inq.prompt([{
-            name: 'question',
-            type: 'list',
-            message: '  These are the questions found:',
-            choices: qOpts
-        }], function (q) {
-            resolve(opts[q.question]);
-        });
+        if (qOpts.length) {
+            inq.prompt([{
+                name: 'question',
+                type: 'list',
+                message: '  These are the questions found:',
+                choices: qOpts
+            }], function (q) {
+                resolve(opts[q.question]);
+            });
+        } else {
+            console.log('    Sorry, did not find any question matching your problem!');
+        }
     });
 };

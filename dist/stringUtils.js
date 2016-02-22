@@ -41,7 +41,7 @@ module.exports = function (str) {
 
     // replacing strong
     this.treatStrong = function () {
-        var bolds = finalStr.match(/\<strong\>(.+?(?=\<\/strong\>))\<\/strong\>/g);
+        var bolds = finalStr.match(/\<strong\>([\s\S]+?(?=\<\/strong\>))\<\/strong\>/g);
         if (bolds && bolds.length) {
             bolds.forEach(function (cur) {
                 finalStr = finalStr.replace(cur, cliColor.bold(cur.replace(/\<(\/)?strong\>/g, '')));
@@ -63,10 +63,10 @@ module.exports = function (str) {
 
     // replacing italics
     this.treatItalic = function () {
-        var intalics = finalStr.match(/\<i\>(.+?(?=\<\/i\>))\<\/i\>/g);
+        var intalics = finalStr.match(/\<i\>([\s\S]+?(?=\<\/i\>))\<\/i\>/g);
         if (intalics && intalics.length) {
             intalics.forEach(function (cur) {
-                finalStr = finalStr.replace(cur, cliColor.italic(cur.replace(/\<(\/)?strong\>/g, '')));
+                finalStr = finalStr.replace(cur, cliColor.italic(cur.replace(/\<(\/)?i\>/g, '')));
             });
         }
         return that;
@@ -74,7 +74,7 @@ module.exports = function (str) {
 
     // replacing links with different text contents (so we can show the href instead)
     this.treatLinks = function () {
-        var links = finalStr.match(/\<a(.+?(?=\<\/a\>))\<\/a\>/g);
+        var links = finalStr.match(/\<a([\s\S]+?(?=\<\/a\>))\<\/a\>/g);
         if (links && links.length) {
             links.forEach(function (cur) {
                 var href = cur.match(/href\=\"(.+?(?=\"))\"/);

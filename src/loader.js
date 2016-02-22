@@ -18,20 +18,21 @@ let loadingTimer = null;
 
 function loading (status) {
     if (status) {
-        console.log(LOAD_STATUSES[curloadingStatus]);
+        process.stdout.write(LOAD_STATUSES[curloadingStatus]);
         curloadingStatus++;
         if(curloadingStatus >= LOAD_STATUSES.length){
             curloadingStatus= 0;
         }
         loadingTimer = setTimeout(_=>loading(true), 60);
         cursor.left(99);
-        cursor.up(1);
+        //cursor.up(1);
     }else{
         clearTimeout(loadingTimer);
         curloadingStatus = 0;
         cursor.left(99);
-        console.log('                  ');
-        cursor.up(2);
+        process.stdout.write('                  ');
+        cursor.left(99);
+        //cursor.up(2);
     }
 }
 
