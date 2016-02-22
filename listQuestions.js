@@ -30,6 +30,7 @@ module.exports = function listQuestions (html) {
                 break;
             }
         }
+        
         inq.prompt([
                 {
                     name: 'question',

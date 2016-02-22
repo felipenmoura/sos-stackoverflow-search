@@ -11,7 +11,11 @@ module.exports = function getAnswer (html) {
                   .getElementsByClassName('post-text')[0];
         let inner = ans.innerHTML;
         
-        console.log(treatString(inner));
+        try{
+            console.log(treatString(inner));
+        }catch(e){
+            console.error(e);
+        }
         
         resolve();
         

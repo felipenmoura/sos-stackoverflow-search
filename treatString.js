@@ -2,27 +2,93 @@ let DOMParser = require('dom-parser');
 let cardinal = require('cardinal');
 let cliColor = require('cli-color');
 
-const CODE_START = "\n+--------------------";
-const CODE_LINE = "\n| ";
-const CODE_END = "\n+--------------------\n";
-const LINE_SIZE = 80;
+const INDENT = "    ";
+const CODE_START = `+--------------------`;
+const CODE_LINE = `\n${INDENT}| `;
+const CODE_END = `\n${INDENT}+--------------------\n\n`;
+const LINE_SIZE = process.stdout.columns > 80? 80: process.stdout.columns;
+
+
+function lengthInUtf8Bytes(str) {
+    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+    var m = encodeURIComponent(str).match(
+        /\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i).*?\>/g
+    );
+    return str.length - (m ? m.join().length : 0);
+}
 
 module.exports = function treatString (str) {
     
     let parser = new DOMParser();
     let doc = parser.parseFromString(str, "text/html");
-    let codes;// = [].slice.call(doc.getElementsByTagName('pre'));
     let finalStr = "";
     
-    finalStr = str.replace(/\<(?!pre|code|\/pre|\/code|a|\/a).*?\>/g, "")
+    finalStr = str.replace(/\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i).*?\>/g, "")
                 .replace(/\<code\>/g, '<code>');
     
     finalStr = finalStr.replace(/\r/g, '');
     finalStr = finalStr.replace(/\n\n/g, '\n');
     finalStr = finalStr.replace(/\&lt\;/g, '<').replace(/\&gt\;/g, '>');
     
+    // replacing strong
+    let bolds = finalStr.match(/\<strong\>(.+?(?=\<\/strong\>))\<\/strong\>/g);
+    if (bolds && bolds.length) {
+        bolds.forEach(function(cur){
+            finalStr = finalStr.replace(cur, cliColor.bold(cur.replace(/\<(\/)?strong\>/g, '')));
+        });
+    }
+    
+    // replacing italic
+    let intalics = finalStr.match(/\<i\>(.+?(?=\<\/i\>))\<\/i\>/g);
+    if (intalics && intalics.length) {
+        intalics.forEach(function(cur){
+            finalStr = finalStr.replace(cur, cliColor.italic(cur.replace(/\<(\/)?strong\>/g, '')));
+        });
+    }
+    
+    // limmiting the length of each line
+    let LineBreaker = require('linebreak');
+    let breaker = new LineBreaker(finalStr);
+    let last = 0;
+    let bk;
+    let curLine = '';
+    let finalResult = '';
+    
+    while (bk = breaker.nextBreak()) {
+        var word = finalStr.slice(last, bk.position);
+        last = bk.position;
+        
+        if (
+            ( (lengthInUtf8Bytes(curLine) > LINE_SIZE) && word.match(/^[ -~]+$/) )
+            || word.indexOf('<pre><code>') === 0
+            || word.indexOf('</code></pre>') > -1
+        ) {
+            finalResult += INDENT + curLine + '\n';
+            curLine = '';
+        }
+        
+        curLine += word;
+        
+        if (bk.required) {
+            //curLine += '        ';
+            if (word.match(/\\\[([0-9]{1, 2}m)/)) {
+                curLine += INDENT;
+            } else if (word == CODE_START || word == CODE_END){
+                //console.log(word);
+                curLine += INDENT;
+            }else{
+                curLine += INDENT;
+            }
+        }
+    }
+    
+    finalResult = finalResult.replace(/\n( +)?\<\/code\>/gm, '</code>');
+    finalStr = finalResult;
+    finalStr = finalStr.replace(/\n\[((0-9){1,2}m)?\n/g, '\n');
+    
+    
     // replacing multiline pre/codes
-    codes = finalStr.match(/\<pre\>\<code\>([\s\S]+?(?=\<\/code\>))\<\/code\>\<\/pre\>/g);
+    let codes = finalStr.match(/\<pre\>\<code\>([\s\S]+?(?=\<\/code\>))\<\/code\>\<\/pre\>/g);
     if (codes && codes.length) {
         let replacement = "";
         codes.forEach(function(cur){
@@ -42,23 +108,13 @@ module.exports = function treatString (str) {
         });
     }
     
-    finalStr = finalStr.replace(/\<(\/)?pre\>/g, '');
-    codes = finalStr.match(/\<code\>(.+?(?=\<\/code\>))\<\/code\>/g);
-    if (codes && codes.length) {
-        let replacement = "";
-        codes.forEach(function(cur){
-            replacement = cliColor.bgWhite.black(cur.replace(/\<(\/)?code\>/g, ''));
-            finalStr = finalStr.replace(cur, replacement);
-        });
-    }
-    
     // replacing single line pre/codes
     finalStr = finalStr.replace(/\<(\/)?pre\>/g, '');
     codes = finalStr.match(/\<code\>(.+?(?=\<\/code\>))\<\/code\>/g);
     if (codes && codes.length) {
         let replacement = "";
         codes.forEach(function(cur){
-            replacement = cliColor.bgWhite.black(cur.replace(/\<(\/)?code\>/g, ''));
+            replacement = cliColor.redBright(cur.replace(/\<(\/)?code\>/g, ''));
             finalStr = finalStr.replace(cur, replacement);
         });
     }
@@ -76,15 +132,15 @@ module.exports = function treatString (str) {
     }
     
     // highlighting URLS
-    finalStr = finalStr.replace( /(http(s)?:\/\/[^\s]+)/gi , cliColor.underline.bold('$1') );
+    finalStr = finalStr.replace(/(http(s)?:\/\/[^\s]+)/gi , cliColor.underline.bold('$1'));
     
-    // limiting the width on the screen
-//    finalStr.match(/(.+)/g).forEach(cur=>{
-//        if (cur.length > LINE_SIZE) {
-//            cur = cur.match(new RegExp(`.{1,${LINE_SIZE}}`, 'g'));
-//            console.log(cur);
-//        }
-//    });
+    // removing tabs
+    finalStr = finalStr.replace(/\t|\r/g, '');
+    finalStr = finalStr.replace(/\n\n/g, '\n');
+    //finalStr = finalStr.replace(/\n   \+/g, '   +');
     
-    return finalStr;
+    console.log(str);
+    console.log("===============");
+    
+    return finalStr+"\n\n";
 };
