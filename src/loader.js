@@ -25,14 +25,12 @@ function loading (status) {
         }
         loadingTimer = setTimeout(_=>loading(true), 60);
         cursor.left(99);
-        //cursor.up(1);
     }else{
         clearTimeout(loadingTimer);
         curloadingStatus = 0;
         cursor.left(99);
-        process.stdout.write('                  ');
+        process.stdout.write(' '.repeate(20));
         cursor.left(99);
-        //cursor.up(2);
     }
 }
 

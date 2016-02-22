@@ -21,8 +21,8 @@ module.exports = function (str) {
     var doc = parser.parseFromString(str, "text/html");
     var finalStr = originalValue;
 
+    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
     var lengthInUtf8Bytes = function lengthInUtf8Bytes(str) {
-        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
         var r = new RegExp('%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|<(?!' + allowedTags + ').*?>', 'g');
         var m = encodeURIComponent(str).match(r);
         return str.length - (m ? m.join().length : 0);
@@ -114,40 +114,47 @@ module.exports = function (str) {
 
     // highlighting URLS
     this.highlightURLs = function () {
-        finalStr = finalStr.replace(/(http(s)?:\/\/[^\s\"|~]+)/gi, cliColor.underline.bold('$1'));
+        finalStr = finalStr.replace(/((http|ftp)(s)?:\/\/([^\s\"]|[\~\?\&\@\=])+)/gi, cliColor.underline.bold('$1'));
         return that;
     };
 
     // limmiting the length of each line
     this.limitLineLength = function () {
-        var LineBreaker = require('linebreak');
-        var breaker = new LineBreaker(finalStr);
         var last = 0;
-        var bk = undefined;
-        var curLine = '';
+        var curLine = undefined;
         var finalResult = '';
+        var lines = finalStr.split('\n');
+        var word = '';
 
-        while (bk = breaker.nextBreak()) {
-            var word = finalStr.slice(last, bk.position);
-            last = bk.position;
+        lines.forEach(function (line) {
+            curLine = '';
+            var words = line.split(' ');
+            var word = undefined;
 
-            if (lengthInUtf8Bytes(curLine) > LINE_SIZE && word.match(/^[ -~]+$/) || word.indexOf('<pre><code>') === 0 || word.indexOf('</code></pre>') > -1) {
+            //if(line.indexOf('--') >= 0) console.log(line.substring(line.indexOf('--'), line.indexOf('--') + 20));
+            //if(line.replace(/ /g, '') == '') console.log('> ', line);
+
+            if (line.replace(/ /g, '') != '') {
+                while (words[0] !== void 0) {
+                    word = words.shift();
+                    curLine += word + ' ';
+
+                    if (lengthInUtf8Bytes(curLine) > LINE_SIZE) {
+                        finalResult += INDENT + curLine + '\n';
+                        curLine = '';
+                    }
+                }
                 finalResult += INDENT + curLine + '\n';
-                curLine = '';
             }
+        });
 
-            curLine += word;
-
-            if (bk.required) {
-                curLine += INDENT;
-            }
-        }
         if (curLine) {
             finalResult += INDENT + curLine;
         }
 
         finalResult = finalResult.replace(/\n( +)?\<\/code\>/gm, '</code>');
         finalStr = finalResult;
+        //console.log(finalStr.substring(finalStr.indexOf('--'), finalStr.indexOf('--') + 20))
         finalStr = finalStr.replace(/\n\[((0-9){1,2}m)?\n/g, '\n');
 
         return that;
@@ -192,6 +199,7 @@ module.exports = function (str) {
         return that;
     };
 
+    // highlighting some extra useful words
     this.highlightExtras = function () {
         finalStr = finalStr.replace(/(note\:)/ig, cliColor.bold.blueBright('Note:'));
         finalStr = finalStr.replace(/(edit\:)/ig, cliColor.bold.blueBright('EDIT:'));

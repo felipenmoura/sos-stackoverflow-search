@@ -28,8 +28,8 @@ module.exports = function (str) {
     let doc = parser.parseFromString(str, "text/html");
     let finalStr = originalValue;
     
+    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
     let lengthInUtf8Bytes = function (str) {
-        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
         let r = new RegExp(`\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!${allowedTags}).*?\>`, 'g');
         let m = encodeURIComponent(str).match(r);
         return str.length - (m ? m.join().length : 0);
@@ -122,45 +122,41 @@ module.exports = function (str) {
     
     // highlighting URLS
     this.highlightURLs = function () {
-        finalStr = finalStr.replace(/(http(s)?:\/\/[^\s\"|~]+)/gi , cliColor.underline.bold('$1'));
+        finalStr = finalStr.replace(/((http|ftp)(s)?:\/\/([^\s\"]|[\~\?\&\@\=])+)/gi , cliColor.underline.bold('$1'));
         return that;
     };
     
     // limmiting the length of each line
     this.limitLineLength = function () {
-        let LineBreaker = require('linebreak');
-        let breaker = new LineBreaker(finalStr);
         let last = 0;
-        let bk;
-        let curLine = '';
+        let curLine;
         let finalResult = '';
+        let lines = finalStr.split('\n');
+        let word = '';
         
-        while (bk = breaker.nextBreak()) {
-            var word = finalStr.slice(last, bk.position);
-            last = bk.position;
+        lines.forEach(line=>{
+            curLine = '';
+            let words = line.split(' ');
+            let word;
             
-            if (
-                (
-                    lengthInUtf8Bytes(curLine) > LINE_SIZE
-                    && word.match(/^[ -~]+$/)
-                )
-                || word.indexOf('<pre><code>') === 0
-                || word.indexOf('</code></pre>') > -1
-            ) {
+            if (line.replace(/ /g, '') != '') {
+                while(words[0] !== void(0)){
+                    word = words.shift();
+                    curLine += word + ' ';
+
+                    if (lengthInUtf8Bytes(curLine) > LINE_SIZE) {
+                        finalResult += INDENT + curLine + '\n';
+                        curLine = '';
+                    }
+                }
                 finalResult += INDENT + curLine + '\n';
-                curLine = '';
             }
-
-            curLine += word;
-
-            if (bk.required) {
-                curLine += INDENT;
-            }
-        }
+        });
+        
         if(curLine){
             finalResult += INDENT + curLine;
         }
-
+        
         finalResult = finalResult.replace(/\n( +)?\<\/code\>/gm, '</code>');
         finalStr = finalResult;
         finalStr = finalStr.replace(/\n\[((0-9){1,2}m)?\n/g, '\n');
