@@ -30,7 +30,8 @@ function loading (status) {
         clearTimeout(loadingTimer);
         curloadingStatus = 0;
         cursor.left(99);
-        cursor.up(1);
+        console.log('                  ');
+        cursor.up(2);
     }
 }
 
