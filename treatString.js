@@ -38,11 +38,23 @@ module.exports = function treatString (str) {
         });
     }
     
-    // replacing italic
+    // replacing italics
     let intalics = finalStr.match(/\<i\>(.+?(?=\<\/i\>))\<\/i\>/g);
     if (intalics && intalics.length) {
         intalics.forEach(function(cur){
             finalStr = finalStr.replace(cur, cliColor.italic(cur.replace(/\<(\/)?strong\>/g, '')));
+        });
+    }
+    
+    // replacing links with different text contents (so we can show the href instead)
+    let links = finalStr.match(/\<a(.+?(?=\<\/a\>))\<\/a\>/g);
+    if (links && links.length) {
+        links.forEach(function(cur){
+            let href = cur.match(/href\=\"(.+?(?=\"))\"/);
+            let inner = cur.match(/\>(.+?(?=\<\/a))\<\/a/);
+            if(href && inner){
+                finalStr = finalStr.replace(cur, cliColor.underline(href[1]));
+            }
         });
     }
     
@@ -116,18 +128,6 @@ module.exports = function treatString (str) {
         codes.forEach(function(cur){
             replacement = cliColor.redBright(cur.replace(/\<(\/)?code\>/g, ''));
             finalStr = finalStr.replace(cur, replacement);
-        });
-    }
-    
-    // replacing links with different text contents (so we can show the href instead)
-    let links = finalStr.match(/\<a(.+?(?=\<\/a\>))\<\/a\>/g);
-    if (links && links.length) {
-        links.forEach(function(cur){
-            let href = cur.match(/href\=\"(.+?(?=\"))\"/);
-            let inner = cur.match(/\>(.+?(?=\<\/a))\<\/a/);
-            if(href && inner){
-                finalStr = finalStr.replace(cur, cliColor.underline(href[1]));
-            }
         });
     }
     
