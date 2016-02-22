@@ -9,6 +9,15 @@ Let's say you are facing a problem rendering an HTML5 canvas!
 
 `$ sos error rendering html5 canvas`
 
+#### Advantages
+
+- straight in your terminal
+- highlights code (if it is a valid javascript code)
+- takes in consideration italic, bold, links, lists and blockquotes
+- shows only questions that have a correct answer
+- shows the answer itself in the terminal
+- adds a link for you to (ctrl/cmd)+click and open the page in your browser
+
 #### Installing
 
 To install it, simply install it globally:

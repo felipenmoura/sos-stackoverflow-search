@@ -7,6 +7,17 @@ const CODE_START = `+--------------------`;
 const CODE_LINE = `\n${INDENT}| `;
 const CODE_END = `\n${INDENT}+--------------------\n\n`;
 const LINE_SIZE = process.stdout.columns > 80? 80: process.stdout.columns;
+const ALLOWED_TAGS = [
+    'pre',
+    'code',
+    'a',
+    'i',
+    'strong',
+    'blockquote',
+    'li',
+    'hr\/'
+];
+let allowedTags = ALLOWED_TAGS.join('|') + '|\/' + ALLOWED_TAGS.join('|\/');
 
 module.exports = function (str) {
     
@@ -19,15 +30,14 @@ module.exports = function (str) {
     
     let lengthInUtf8Bytes = function (str) {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
-        var m = encodeURIComponent(str).match(
-            /\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i|blockquote|\/blockquote).*?\>/g
-        );
+        let r = new RegExp(`\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!${allowedTags}).*?\>`, 'g');
+        let m = encodeURIComponent(str).match(r);
         return str.length - (m ? m.join().length : 0);
     };
     
     // removes useless tags
     this.removeUnusedTags = function () {
-        finalStr = finalStr .replace(/\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i|blockquote|\/blockquote).*?\>/g, "")
+        finalStr = finalStr .replace(new RegExp(`\<(?!${allowedTags}).*?\>`, 'g'), "")
                             .replace(/\<code\>/g, '<code>');
         return that;
     };
@@ -73,6 +83,28 @@ module.exports = function (str) {
         return that;
     };
     
+    // replacing lists
+    this.treatLists = function () {
+        let lists = finalStr.match(/\<li\>([\s\S]+?(?=\<\/li\>))\<\/li\>/g);
+        if (lists && lists.length) {
+            lists.forEach(function(cur){
+                finalStr = finalStr.replace(cur, cliColor.bold('- ') + cur.replace(/\<(\/)?li\>/g, ''));
+            });
+        }
+        return that;
+    };
+    
+    // replacing bars
+    this.treatBars = function () {
+        let bars = finalStr.match(/\<hr\/\>/g);
+        if (bars && bars.length) {
+            bars.forEach(function(cur){
+                finalStr = finalStr.replace(cur, '_'.repeat(LINE_SIZE - INDENT.length));
+            });
+        }
+        return that;
+    };
+    
     // replacing links with different text contents (so we can show the href instead)
     this.treatLinks = function () {
         let links = finalStr.match(/\<a([\s\S]+?(?=\<\/a\>))\<\/a\>/g);
@@ -88,6 +120,12 @@ module.exports = function (str) {
         return that;
     };
     
+    // highlighting URLS
+    this.highlightURLs = function () {
+        finalStr = finalStr.replace(/(http(s)?:\/\/[^\s\"|~]+)/gi , cliColor.underline.bold('$1'));
+        return that;
+    };
+    
     // limmiting the length of each line
     this.limitLineLength = function () {
         let LineBreaker = require('linebreak');
@@ -96,22 +134,10 @@ module.exports = function (str) {
         let bk;
         let curLine = '';
         let finalResult = '';
-        let prevWord = null;
-
+        
         while (bk = breaker.nextBreak()) {
             var word = finalStr.slice(last, bk.position);
             last = bk.position;
-            
-//            if(prevWord && prevWord.match(/(http|https|ftp)\:\/\//)) {
-//                curLine+= word;
-//                //console.log(word[0])
-//                //prevWord[prevWord.length-1] != '/' && !
-//                if (word.match(/[ \n\t]|$/)) {
-//                    console.log(prevWord, word);
-//                    prevWord = word;
-//                }
-//                continue;
-//            }
             
             if (
                 (
@@ -128,15 +154,8 @@ module.exports = function (str) {
             curLine += word;
 
             if (bk.required) {
-//                if (word.match(/\\\[([0-9]{1, 2}m)/)) {
-//                    curLine += INDENT;
-//                } else if (word == CODE_START || word == CODE_END){
-//                    curLine += INDENT;
-//                }else{
                 curLine += INDENT;
-//                }
             }
-            prevWord = word;
         }
         if(curLine){
             finalResult += INDENT + curLine;
@@ -158,8 +177,7 @@ module.exports = function (str) {
             codes.forEach(function(cur){
                 try{
                     replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {
-                        linenos: true//,
-                        //theme: __dirname + '/sh-theme.js'
+                        linenos: true
                     });
                 }catch(e){
                     // not able to highlight it...ok, let's go on!
@@ -178,7 +196,7 @@ module.exports = function (str) {
     // replacing single line pre/codes
     this.treatSinglelineCode = function () {
         finalStr = finalStr.replace(/\<(\/)?pre\>/g, '');
-        let codes = finalStr.match(/\<code\>(.+?(?=\<\/code\>))\<\/code\>/g);
+        let codes = finalStr.match(/\<code\>([\s\S]+?(?=\<\/code\>))\<\/code\>/g);
         if (codes && codes.length) {
             let replacement = "";
             codes.forEach(function(cur){
@@ -189,17 +207,19 @@ module.exports = function (str) {
         return that;
     };
     
-    // highlighting URLS
-    this.highlightURLs = function () {
-        finalStr = finalStr.replace(/(http(s)?:\/\/[^\s]+)/gi , cliColor.underline.bold('$1'));
+    // highlighting some extra useful words
+    this.highlightExtras = function () {
+        finalStr = finalStr.replace(/(note\:)/ig, cliColor.bold.blueBright('Note:'));
+        finalStr = finalStr.replace(/(edit\:)/ig, cliColor.bold.blueBright('EDIT:'));
         return that;
     };
     
-    // removing tans, /r and extra double lines
+    // removing tabs, /r and extra double lines
     this.removeExtraSpaces = function () { 
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
         finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
+        finalStr = finalStr.replace(/\|( )?([0-9]{1,3})?    /g, '|$1$2');
         return that;
     };
 
