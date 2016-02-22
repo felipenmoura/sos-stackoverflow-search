@@ -3,7 +3,7 @@ const getAnswer = require('./getAnswer.js');
 const goGet = require('./goGet.js');
 const SO = "http://stackoverflow.com";
 
-export function showQuestions (search) {
+function showQuestions (search) {
     return new Promise((resolve, reject)=>{
         goGet(`${SO}/search?q=${search}`)
             .then(listQuestions)
@@ -14,12 +14,12 @@ export function showQuestions (search) {
     });
 };
 
-export function showAnswer (href) {
+function showAnswer (href) {
     return new Promise((resolve, reject)=>{
         
         let cli = require('cli-color');
-        console.log(cli.bold('LINK: '), cli.bold.underline(SO + href));
-        console.log(cli.bold('ANSWER: '));
+        console.log(cli.bold('    LINK: '), cli.bold.underline(SO + href));
+        console.log(cli.bold('    ANSWER: '));
         
         goGet(SO + href)
             .then(getAnswer)
@@ -31,3 +31,7 @@ export function showAnswer (href) {
     });
 };
 
+module.exports = {
+    showQuestions,
+    showAnswer
+};

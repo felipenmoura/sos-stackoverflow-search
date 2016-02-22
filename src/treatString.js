@@ -3,15 +3,16 @@ let stringUtils = require('./stringUtils.js');
 
 module.exports = function treatString (str) {    
     return (new stringUtils(str))
+        .treatLinks()
         .removeUnusedTags()
         .cleanGarbage()
         .treatStrong()
+        .treatBlockquotes()
         .treatItalic()
-        .treatLinks()
+        .highlightURLs()
         .limitLineLength()
         .treatMultilineCode()
         .treatSinglelineCode()
-        .highlightURLs()
         .removeExtraSpaces()
         .getResult();
 };

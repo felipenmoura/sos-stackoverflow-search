@@ -20,14 +20,14 @@ module.exports = function (str) {
     let lengthInUtf8Bytes = function (str) {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
         var m = encodeURIComponent(str).match(
-            /\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i).*?\>/g
+            /\%[03-9A-Ba-b]{1,2}([0-9]{1, 2}m)?|\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i|blockquote|\/blockquote).*?\>/g
         );
         return str.length - (m ? m.join().length : 0);
     };
     
     // removes useless tags
     this.removeUnusedTags = function () {
-        finalStr = finalStr .replace(/\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i).*?\>/g, "")
+        finalStr = finalStr .replace(/\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i|blockquote|\/blockquote).*?\>/g, "")
                             .replace(/\<code\>/g, '<code>');
         return that;
     };
@@ -46,6 +46,17 @@ module.exports = function (str) {
         if (bolds && bolds.length) {
             bolds.forEach(function(cur){
                 finalStr = finalStr.replace(cur, cliColor.bold(cur.replace(/\<(\/)?strong\>/g, '')));
+            });
+        }
+        return that;
+    };
+    
+    // replacing blockquote
+    this.treatBlockquotes = function () {
+        let bqs = finalStr.match(/\<blockquote\>(([\s\S]+)?(?=\<\/blockquote\>))?\<\/blockquote\>/g);
+        if (bqs && bqs.length) {
+            bqs.forEach(function(cur){
+                finalStr = finalStr.replace(cur, cliColor.bold.yellow(cur.replace(/\<(\/)?blockquote\>/g, '')));
             });
         }
         return that;
@@ -85,13 +96,28 @@ module.exports = function (str) {
         let bk;
         let curLine = '';
         let finalResult = '';
+        let prevWord = null;
 
         while (bk = breaker.nextBreak()) {
             var word = finalStr.slice(last, bk.position);
             last = bk.position;
-
+            
+//            if(prevWord && prevWord.match(/(http|https|ftp)\:\/\//)) {
+//                curLine+= word;
+//                //console.log(word[0])
+//                //prevWord[prevWord.length-1] != '/' && !
+//                if (word.match(/[ \n\t]|$/)) {
+//                    console.log(prevWord, word);
+//                    prevWord = word;
+//                }
+//                continue;
+//            }
+            
             if (
-                ( (lengthInUtf8Bytes(curLine) > LINE_SIZE) && word.match(/^[ -~]+$/) )
+                (
+                    lengthInUtf8Bytes(curLine) > LINE_SIZE
+                    && word.match(/^[ -~]+$/)
+                )
                 || word.indexOf('<pre><code>') === 0
                 || word.indexOf('</code></pre>') > -1
             ) {
@@ -102,14 +128,15 @@ module.exports = function (str) {
             curLine += word;
 
             if (bk.required) {
-                if (word.match(/\\\[([0-9]{1, 2}m)/)) {
-                    curLine += INDENT;
-                } else if (word == CODE_START || word == CODE_END){
-                    curLine += INDENT;
-                }else{
-                    curLine += INDENT;
-                }
+//                if (word.match(/\\\[([0-9]{1, 2}m)/)) {
+//                    curLine += INDENT;
+//                } else if (word == CODE_START || word == CODE_END){
+//                    curLine += INDENT;
+//                }else{
+                curLine += INDENT;
+//                }
             }
+            prevWord = word;
         }
         if(curLine){
             finalResult += INDENT + curLine;
@@ -127,10 +154,12 @@ module.exports = function (str) {
         let codes = finalStr.match(/\<pre\>\<code\>([\s\S]+?(?=\<\/code\>))\<\/code\>\<\/pre\>/g);
         if (codes && codes.length) {
             let replacement = "";
+            
             codes.forEach(function(cur){
                 try{
                     replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {
-                        linenos: true
+                        linenos: true//,
+                        //theme: __dirname + '/sh-theme.js'
                     });
                 }catch(e){
                     // not able to highlight it...ok, let's go on!
@@ -170,6 +199,7 @@ module.exports = function (str) {
     this.removeExtraSpaces = function () { 
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
+        finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
         return that;
     };
 

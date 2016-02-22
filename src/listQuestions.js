@@ -35,7 +35,7 @@ module.exports = function listQuestions (html) {
                 {
                     name: 'question',
                     type: 'list',
-                    message: 'These are the questions we found:',
+                    message: '  These are the questions found:',
                     choices: qOpts
                 }
             ],
