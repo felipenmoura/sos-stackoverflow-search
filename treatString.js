@@ -2,6 +2,8 @@ let DOMParser = require('dom-parser');
 let cardinal = require('cardinal');
 let cliColor = require('cli-color');
 
+let stringUtils = require('./stringUtils.js');
+
 const INDENT = "    ";
 const CODE_START = `+--------------------`;
 const CODE_LINE = `\n${INDENT}| `;
@@ -23,9 +25,11 @@ module.exports = function treatString (str) {
     let doc = parser.parseFromString(str, "text/html");
     let finalStr = "";
     
+    // removing all tags except some specific ones
     finalStr = str.replace(/\<(?!pre|code|\/pre|\/code|a|\/a|strong|\/strong|i|\/i).*?\>/g, "")
                 .replace(/\<code\>/g, '<code>');
     
+    // replacing some garbage
     finalStr = finalStr.replace(/\r/g, '');
     finalStr = finalStr.replace(/\n\n/g, '\n');
     finalStr = finalStr.replace(/\&lt\;/g, '<').replace(/\&gt\;/g, '>');
@@ -82,22 +86,22 @@ module.exports = function treatString (str) {
         curLine += word;
         
         if (bk.required) {
-            //curLine += '        ';
             if (word.match(/\\\[([0-9]{1, 2}m)/)) {
                 curLine += INDENT;
             } else if (word == CODE_START || word == CODE_END){
-                //console.log(word);
                 curLine += INDENT;
             }else{
                 curLine += INDENT;
             }
         }
     }
+    if(curLine){
+        finalResult += INDENT + curLine;
+    }
     
     finalResult = finalResult.replace(/\n( +)?\<\/code\>/gm, '</code>');
     finalStr = finalResult;
     finalStr = finalStr.replace(/\n\[((0-9){1,2}m)?\n/g, '\n');
-    
     
     // replacing multiline pre/codes
     let codes = finalStr.match(/\<pre\>\<code\>([\s\S]+?(?=\<\/code\>))\<\/code\>\<\/pre\>/g);
@@ -137,10 +141,6 @@ module.exports = function treatString (str) {
     // removing tabs
     finalStr = finalStr.replace(/\t|\r/g, '');
     finalStr = finalStr.replace(/\n\n/g, '\n');
-    //finalStr = finalStr.replace(/\n   \+/g, '   +');
-    
-    console.log(str);
-    console.log("===============");
     
     return finalStr+"\n\n";
 };
