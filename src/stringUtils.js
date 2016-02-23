@@ -3,15 +3,16 @@ let cardinal = require('cardinal');
 let cliColor = require('cli-color');
 
 const INDENT = "    ";
-const CODE_START = `+--------------------`;
-const CODE_LINE = `\n${INDENT}| `;
-const CODE_END = `\n${INDENT}+--------------------\n\n`;
+const CODE_START = cliColor.red(`+--------------------`);
+const CODE_LINE = cliColor.red(`\n${INDENT}| `);
+const CODE_END = cliColor.red(`\n${INDENT}+--------------------\n`);
 const LINE_SIZE = process.stdout.columns > 80? 80: process.stdout.columns;
 const ALLOWED_TAGS = [
     'pre',
     'code',
     'a',
     'i',
+    '\/p',
     'strong',
     'blockquote',
     'li',
@@ -172,13 +173,17 @@ module.exports = function (str) {
             
             codes.forEach(function(cur){
                 try{
-                    replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, '').replace(/\&amp\;/g, '&'), {
+                    let tmp = cur.replace(/\<(\/)?(code|pre)\>/g, '')
+                             .replace(/\&amp\;/g, '&')
+                             .replace(/(^|\n)( +)?\#/g, '$1$2\/\/'); // lines starting with #
+
+                    replacement = cardinal.highlight(tmp, {
                         linenos: true
                     });
                 }catch(e){
-                    //replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {});
+                    replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''))
                     // not able to highlight it...ok, let's go on!
-                    replacement = cur.replace(/\<(\/)?(code|pre)\>/g, '');
+                    replacement = replacement.replace(/\<(\/)?(code|pre)\>/g, '');
                 }
                 finalStr = finalStr.replace(cur,
                                             CODE_START +
@@ -215,8 +220,9 @@ module.exports = function (str) {
     this.removeExtraSpaces = function () { 
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
+        finalStr = finalStr.replace(/\<\/p\>/g, '\n');
         finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
-        finalStr = finalStr.replace(/\|( )?([0-9]{1,3})?    /g, '|$1$2');
+        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})?    /g, '|$1$2');
         return that;
     };
 

@@ -5,11 +5,11 @@ var cardinal = require('cardinal');
 var cliColor = require('cli-color');
 
 var INDENT = "    ";
-var CODE_START = '+--------------------';
-var CODE_LINE = '\n' + INDENT + '| ';
-var CODE_END = '\n' + INDENT + '+--------------------\n\n';
+var CODE_START = cliColor.red('+--------------------');
+var CODE_LINE = cliColor.red('\n' + INDENT + '| ');
+var CODE_END = cliColor.red('\n' + INDENT + '+--------------------\n');
 var LINE_SIZE = process.stdout.columns > 80 ? 80 : process.stdout.columns;
-var ALLOWED_TAGS = ['pre', 'code', 'a', 'i', 'strong', 'blockquote', 'li', 'hr\/'];
+var ALLOWED_TAGS = ['pre', 'code', 'a', 'i', '\/p', 'strong', 'blockquote', 'li', 'hr\/'];
 var allowedTags = ALLOWED_TAGS.join('|') + '|\/' + ALLOWED_TAGS.join('|\/');
 
 module.exports = function (str) {
@@ -58,7 +58,6 @@ module.exports = function (str) {
         var bqs = finalStr.match(/\<blockquote\>([\s\S])+?(?=\<\/blockquote\>)\<\/blockquote\>/g);
         if (bqs && bqs.length) {
             bqs.forEach(function (cur) {
-                console.log(cur);
                 finalStr = finalStr.replace(cur, cliColor.bold.yellow(cur.replace(/\<(\/)?blockquote\>/g, '')));
             });
         }
@@ -166,13 +165,15 @@ module.exports = function (str) {
 
                 codes.forEach(function (cur) {
                     try {
-                        replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, '').replace(/\&amp\;/g, '&'), {
+                        var tmp = cur.replace(/\<(\/)?(code|pre)\>/g, '').replace(/\&amp\;/g, '&').replace(/(^|\n)( +)?\#/g, '$1$2\/\/'); // lines starting with #
+
+                        replacement = cardinal.highlight(tmp, {
                             linenos: true
                         });
                     } catch (e) {
-                        //replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {});
+                        replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''));
                         // not able to highlight it...ok, let's go on!
-                        replacement = cur.replace(/\<(\/)?(code|pre)\>/g, '');
+                        replacement = replacement.replace(/\<(\/)?(code|pre)\>/g, '');
                     }
                     finalStr = finalStr.replace(cur, CODE_START + CODE_LINE + replacement.replace(/\n/g, CODE_LINE) + CODE_END);
                 });
@@ -208,8 +209,9 @@ module.exports = function (str) {
     this.removeExtraSpaces = function () {
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
+        finalStr = finalStr.replace(/\<\/p\>/g, '\n');
         finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
-        finalStr = finalStr.replace(/\|( )?([0-9]{1,3})?    /g, '|$1$2');
+        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})?    /g, '|$1$2');
         return that;
     };
 
