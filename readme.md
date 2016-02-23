@@ -1,5 +1,10 @@
 ## SOS - StackOverflow Search
 
+<a href="https://npmjs.org/package/gh-badges">
+    <img src="https://img.shields.io/npm/v/so-search.svg"
+         alt="npm version">
+</a>
+
 This is a terminal tool for you to search for answers in [http://stackoverflow.com/](stackoverflow) never leaving your natural habitat!
 
 #### How to use it
@@ -8,6 +13,8 @@ Just type `sos` and your question.<br/>
 Let's say you are facing a problem rendering an HTML5 canvas!
 
 `$ sos error rendering html5 canvas`
+
+Anything you pass after the `sos` command, will be treated as your question.
 
 #### Advantages
 
@@ -23,12 +30,5 @@ Let's say you are facing a problem rendering an HTML5 canvas!
 
 To install it, simply install it globally:
 
-If you cloned the repository:
-
-`$ npm install -g ./`
-
-Or
-
-`$ npm install -g sos`
-(it is not yet in npm repos, though)
+`$ npm install -g so-search`
 

@@ -1,10 +1,11 @@
 {
-  "name": "sos",
+  "name": "so-search",
   "version": "1.0.0",
   "description": "StackOverflow Search",
   "bin": {
     "sos": "./index.js"
   },
+  "environment": "node",
   "preferGlobal": true,
   "main": "index.js",
   "scripts": {
@@ -24,7 +25,7 @@
     "command-line",
     "help"
   ],
-  "author": "Felipe N. Moura <felipenmoura@gmail.com>",
+  "author": "felipenmoura",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/felipenmoura/sos-stackoverflow-search/issues"
