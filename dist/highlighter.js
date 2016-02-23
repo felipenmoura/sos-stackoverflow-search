@@ -2,11 +2,6 @@
 
 var cliColor = require('cli-color');
 
-var keys = {
-    blueBright: ['function', '\(', '\)', '\[', '\]', '\(', '\{', '\}', '\;', '\:', '\=\>'],
-    redBright: ['\+', '\-', '\*', '\/', '\%', '\^', '\/[\s\S]+?(?=\/)\/', '\}', '\;', '\:']
-};
-
 module.exports = {
     highlight: function highlight(str) {
         var tags = null;

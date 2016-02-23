@@ -1,33 +1,5 @@
 let cliColor = require('cli-color');
 
-const keys = {
-    blueBright : [
-        'function',
-        '\(',
-        '\)',
-        '\[',
-        '\]',
-        '\(',
-        '\{',
-        '\}',
-        '\;',
-        '\:',
-        '\=\>'
-    ],
-    redBright : [
-        '\+',
-        '\-',
-        '\*',
-        '\/',
-        '\%',
-        '\^',
-        '\/[\s\S]+?(?=\/)\/',
-        '\}',
-        '\;',
-        '\:'
-    ]
-}
-
 module.exports = {
     highlight: function (str) {
         let tags = null;
@@ -58,8 +30,6 @@ module.exports = {
                             tagStr = tagStr.replace(attr, cliColor.redBright(attr));
                         });
                     }
-                    
-                    
                     
                     tagStr = tagStr.replace(new RegExp('\\'+tagName, 'ig'), cliColor.blueBright(tagName));
                         

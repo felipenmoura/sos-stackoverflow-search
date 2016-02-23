@@ -217,7 +217,7 @@ module.exports = function (str) {
     };
     
     // removing tabs, /r and extra double lines
-    this.removeExtraSpaces = function () { 
+    this.removeExtraSpaces = function () {
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
         finalStr = finalStr.replace(/\<\/p\>/g, '\n');
