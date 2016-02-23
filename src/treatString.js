@@ -7,7 +7,6 @@ module.exports = function treatString (str) {
         .removeUnusedTags()
         .cleanGarbage()
         .treatStrong()
-        .treatBlockquotes()
         .treatItalic()
         .treatLists()
         .treatBars()
@@ -16,6 +15,7 @@ module.exports = function treatString (str) {
         .limitLineLength()
         .treatMultilineCode()
         .treatSinglelineCode()
+        .treatBlockquotes()
         .removeExtraSpaces()
         .getResult();
 };

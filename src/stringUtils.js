@@ -63,9 +63,10 @@ module.exports = function (str) {
     
     // replacing blockquote
     this.treatBlockquotes = function () {
-        let bqs = finalStr.match(/\<blockquote\>(([\s\S]+)?(?=\<\/blockquote\>))?\<\/blockquote\>/g);
+        let bqs = finalStr.match(/\<blockquote\>([\s\S])+?(?=\<\/blockquote\>)\<\/blockquote\>/g);
         if (bqs && bqs.length) {
             bqs.forEach(function(cur){
+                console.log(cur);
                 finalStr = finalStr.replace(cur, cliColor.bold.yellow(cur.replace(/\<(\/)?blockquote\>/g, '')));
             });
         }
@@ -172,10 +173,11 @@ module.exports = function (str) {
             
             codes.forEach(function(cur){
                 try{
-                    replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {
+                    replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, '').replace(/\&amp\;/g, '&'), {
                         linenos: true
                     });
                 }catch(e){
+                    //replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {});
                     // not able to highlight it...ok, let's go on!
                     replacement = cur.replace(/\<(\/)?(code|pre)\>/g, '');
                 }

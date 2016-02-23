@@ -55,9 +55,10 @@ module.exports = function (str) {
 
     // replacing blockquote
     this.treatBlockquotes = function () {
-        var bqs = finalStr.match(/\<blockquote\>(([\s\S]+)?(?=\<\/blockquote\>))?\<\/blockquote\>/g);
+        var bqs = finalStr.match(/\<blockquote\>([\s\S])+?(?=\<\/blockquote\>)\<\/blockquote\>/g);
         if (bqs && bqs.length) {
             bqs.forEach(function (cur) {
+                console.log(cur);
                 finalStr = finalStr.replace(cur, cliColor.bold.yellow(cur.replace(/\<(\/)?blockquote\>/g, '')));
             });
         }
@@ -131,9 +132,6 @@ module.exports = function (str) {
             var words = line.split(' ');
             var word = undefined;
 
-            //if(line.indexOf('--') >= 0) console.log(line.substring(line.indexOf('--'), line.indexOf('--') + 20));
-            //if(line.replace(/ /g, '') == '') console.log('> ', line);
-
             if (line.replace(/ /g, '') != '') {
                 while (words[0] !== void 0) {
                     word = words.shift();
@@ -154,7 +152,6 @@ module.exports = function (str) {
 
         finalResult = finalResult.replace(/\n( +)?\<\/code\>/gm, '</code>');
         finalStr = finalResult;
-        //console.log(finalStr.substring(finalStr.indexOf('--'), finalStr.indexOf('--') + 20))
         finalStr = finalStr.replace(/\n\[((0-9){1,2}m)?\n/g, '\n');
 
         return that;
@@ -169,10 +166,11 @@ module.exports = function (str) {
 
                 codes.forEach(function (cur) {
                     try {
-                        replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {
+                        replacement = cardinal.highlight(cur.replace(/\<(\/)?(code|pre)\>/g, '').replace(/\&amp\;/g, '&'), {
                             linenos: true
                         });
                     } catch (e) {
+                        //replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''), {});
                         // not able to highlight it...ok, let's go on!
                         replacement = cur.replace(/\<(\/)?(code|pre)\>/g, '');
                     }
