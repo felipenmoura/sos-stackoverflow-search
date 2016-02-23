@@ -66,7 +66,6 @@ module.exports = function (str) {
         let bqs = finalStr.match(/\<blockquote\>([\s\S])+?(?=\<\/blockquote\>)\<\/blockquote\>/g);
         if (bqs && bqs.length) {
             bqs.forEach(function(cur){
-                console.log(cur);
                 finalStr = finalStr.replace(cur, cliColor.bold.yellow(cur.replace(/\<(\/)?blockquote\>/g, '')));
             });
         }
