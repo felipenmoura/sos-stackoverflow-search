@@ -3,6 +3,7 @@ let cliColor = require('cli-color');
 module.exports = {
     highlight: function (str) {
         let tags = null;
+        let selectors = null;
         if(tags = str.match(/(\<(\/)?[a-z](([^\>])+)?\>)/ig)) {
             
             // is probably an html code
@@ -39,10 +40,63 @@ module.exports = {
             str = str.replace(/\>/g, cliColor.blueBright('>'));
             str = str.replace(/\<\!DOCTYPE html(.+)?\>(.+)?/i, cliColor.bold.blackBright('<!DOCTYPE html>'))
             
-        }else if (str.matc(/(^|\n)( +)?[\.\:\#][a-z0-9\-\_]/i)) {
+        }else if (selectors = str.match(/(^|\n)( +)?[\.\:\#\[\]][a-z0-9\-\_\=\(\)\, \[\]]([\s\S]+)?\{/i)) {
             // is probably css
-            //str += "was css";
-            console.log('>>>>>> CSS');
+            let css = require('css');
+            let obj = css.parse(str, {silent:true});
+            let ruleStr = '';
+            let cssResult = '';
+            
+            if(!obj.parsingErrors){
+                
+                let i = 1;
+                obj.stylesheet.rules.forEach(rule=>{
+                    let sels = [];
+                    rule.selectors.forEach(selector => {
+                        let selStr = cliColor.blueBright(selector
+                            .replace(/\[/g, cliColor.magenta('['))
+                            .replace(/\:hover/g, cliColor.redBright(":hover"))
+                            .replace(/\:active/g, cliColor.redBright(":active"))
+                            .replace(/\:visited/g, cliColor.redBright(":visited"))
+                            .replace(/\:link/g, cliColor.redBright(":link"))
+                            .replace(/\:after/g, cliColor.redBright(":after"))
+                            .replace(/\:before/g, cliColor.redBright(":before"))
+                            .replace(/\./g, cliColor.magenta('.'))
+                            .replace(/\#/g, cliColor.magenta('.'))
+                            //.replace(/\:/g, cliColor.magenta(':'))
+                            .replace(/\,/g, cliColor.magenta(','))
+                            .replace(/\(/g, cliColor.magenta('('))
+                            .replace(/\)/g, cliColor.magenta(')'))
+                            .replace(/\]/g, cliColor.magenta(']'))
+                            .replace(/\=/g, cliColor.magenta('='))
+                            .replace(/\"/g, cliColor.magenta('"'))
+                            .replace(/\'/g, cliColor.magenta("'"))
+                        );
+                        sels.push(selStr);
+                    });
+                    cssResult+= sels.join(',') + '{\n';
+                        
+                    
+                    rule.declarations.forEach(declaration => {
+                        let decStr = cliColor.blueBright(
+                            cliColor.white(declaration.property) + cliColor.magenta(': ') + cliColor.redBright(declaration.value)
+                        );
+                        
+                        declaration = new RegExp(declaration.property+'([\s\S]+)?:([\s\S]+)?'+declaration.value, 'i');
+                        cssResult+= '        ' + decStr + cliColor.magenta(';\n');
+                    });
+                    cssResult+= '}';
+                    
+                    if(i < obj.stylesheet.rules.length){
+                        cssResult += '\n'
+                    }
+                    i++;
+                });
+            }
+            str = cssResult
+                    .replace(/\{/g, cliColor.red('{'))
+                    .replace(/\}/g, cliColor.red('}'))
+                    .replace(/\n\nmagenta/g, cliColor.red('\n'))
         }
         
         return str;

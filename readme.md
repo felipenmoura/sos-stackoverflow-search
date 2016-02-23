@@ -12,6 +12,7 @@ Let's say you are facing a problem rendering an HTML5 canvas!
 #### Advantages
 
 - straight in your terminal
+- don't need to open another tab in your browser
 - highlights code (if it is a valid javascript code)
 - takes in consideration italic, bold, links, lists and blockquotes
 - shows only questions that have a correct answer
