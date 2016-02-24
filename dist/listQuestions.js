@@ -4,7 +4,7 @@ var DOMParser = require('dom-parser');
 var inq = require('inquirer');
 
 module.exports = function listQuestions(html) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         var parser = new DOMParser();
         var doc = parser.parseFromString(html, "text/html");
         var opts = {},
@@ -15,8 +15,8 @@ module.exports = function listQuestions(html) {
             cur = undefined,
             linkText = undefined;
         var limit = 9;
-
         var qList = [].slice.call(doc.getElementsByClassName('question-summary search-result'));
+
         for (i = 0; i < qList.length; i++) {
             cur = qList[i];
             link = cur.getElementsByTagName('a')[0];
@@ -29,7 +29,7 @@ module.exports = function listQuestions(html) {
             linkText = 1 + qOpts.length + ')' + link.innerHTML.replace(/\r|\n|/g, '').replace(/^ Q: /, '');
 
             opts[linkText] = link.getAttribute('href');
-            qOpts.push(linkText);
+            qOpts.push(linkText.replace(/\&amp\;/g, '&').replace(/\&\#39\;/g, "'").substring(0, 80));
 
             if (qOpts.length >= limit) {
                 break;

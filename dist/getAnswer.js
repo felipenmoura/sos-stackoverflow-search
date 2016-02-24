@@ -1,7 +1,6 @@
 'use strict';
 
 var DOMParser = require('dom-parser');
-var inq = require('inquirer');
 var treatString = require('./treatString.js');
 
 module.exports = function getAnswer(html) {

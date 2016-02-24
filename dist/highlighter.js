@@ -19,7 +19,7 @@ module.exports = {
                 if (tagName.length > 1) {
 
                     // attribute names
-                    attrs = tagStr.match(/([a-z0-9\-\_\@\$])+\=\"/ig);
+                    var attrs = tagStr.match(/([a-z0-9\-\_\@\$])+\=\"/ig);
                     if (attrs) {
                         attrs.forEach(function (attr) {
                             tagStr = tagStr.replace(attr, cliColor.red(attr));
@@ -27,7 +27,7 @@ module.exports = {
                     }
 
                     //attribute values
-                    var attrs = tagStr.match(/"(?:[^"\\]|\\.)*"/g);
+                    attrs = tagStr.match(/"(?:[^"\\]|\\.)*"/g);
                     if (attrs) {
                         attrs.forEach(function (attr) {
                             tagStr = tagStr.replace(attr, cliColor.redBright(attr));
@@ -46,7 +46,6 @@ module.exports = {
                 // is probably css
                 var css = require('css');
                 var obj = css.parse(str, { silent: true });
-                var ruleStr = '';
                 var cssResult = '';
 
                 if (!obj.parsingErrors) {

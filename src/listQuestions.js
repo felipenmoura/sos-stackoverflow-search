@@ -24,7 +24,10 @@ module.exports = function listQuestions (html) {
             linkText = (1 + qOpts.length) + ')' + link.innerHTML.replace(/\r|\n|/g, '').replace(/^ Q: /, '');
 
             opts[linkText] = link.getAttribute('href');
-            qOpts.push(linkText);
+            qOpts.push(linkText
+                        .replace(/\&amp\;/g, '&')
+                        .replace(/\&\#39\;/g, "'")
+                        .substring(0, 80));
             
             if(qOpts.length >= limit){
                 break;
