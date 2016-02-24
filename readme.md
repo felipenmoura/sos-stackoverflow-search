@@ -1,7 +1,8 @@
 ## SOS - StackOverflow Search
 
 
-<a href="https://www.npmjs.com/package/so-search" style="float: left; margin-right: 5px;">
+
+<a href="https://www.npmjs.com/package/so-search">
     <img src="https://img.shields.io/npm/v/so-search.svg"
          alt="npm version">
 </a><img src="https://img.shields.io/travis/felipenmoura/sos-stackoverflow-search.svg"
@@ -10,8 +11,8 @@
              alt="Open Issues">
 </a><img src="https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg"
          alt="License">
-         
-https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg
+</a>
+
 This is a terminal tool for you to search for answers in [http://stackoverflow.com/](stackoverflow) never leaving your natural habitat!
 
 #### How to use it
