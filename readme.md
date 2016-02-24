@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/github/issues/felipenmoura/sos-stackoverflow-search.svg"
              alt="Open Issues">
 </a>
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/96b7db1e3c5d49d98295b6f450050602)](https://www.codacy.com/app/felipenmoura/sos-stackoverflow-search)
+![Codacy Badge](https://api.codacy.com/project/badge/grade/96b7db1e3c5d49d98295b6f450050602)
 
 
 This is a terminal tool for you to search for answers in [http://stackoverflow.com/](stackoverflow) never leaving your natural habitat!
