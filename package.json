@@ -1,6 +1,6 @@
 {
   "name": "so-search",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "StackOverflow Search",
   "bin": {
     "sos": "./index.js"
