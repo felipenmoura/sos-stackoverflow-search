@@ -1,7 +1,7 @@
 let cliColor = require('cli-color');
 
 module.exports = {
-    highlight: function (str) {
+    highlight (str) {
         let tags = null;
         let selectors = null;
         if(tags = str.match(/(\<(\/)?[a-z](([^\>])+)?\>)/ig)) {
@@ -17,7 +17,7 @@ module.exports = {
                 if(tagName.length > 1){
                     
                     // attribute names
-                    attrs = tagStr.match(/([a-z0-9\-\_\@\$])+\=\"/ig);
+                    let attrs = tagStr.match(/([a-z0-9\-\_\@\$])+\=\"/ig);
                     if (attrs) {
                         attrs.forEach(attr=>{
                             tagStr = tagStr.replace(attr, cliColor.red(attr));
@@ -25,7 +25,7 @@ module.exports = {
                     }
                     
                     //attribute values
-                    let attrs = tagStr.match(/"(?:[^"\\]|\\.)*"/g);
+                    attrs = tagStr.match(/"(?:[^"\\]|\\.)*"/g);
                     if (attrs) {
                         attrs.forEach(attr=>{
                             tagStr = tagStr.replace(attr, cliColor.redBright(attr));
@@ -38,13 +38,12 @@ module.exports = {
                 }
             });
             str = str.replace(/\>/g, cliColor.blueBright('>'));
-            str = str.replace(/\<\!DOCTYPE html(.+)?\>(.+)?/i, cliColor.bold.blackBright('<!DOCTYPE html>'))
+            str = str.replace(/\<\!DOCTYPE html(.+)?\>(.+)?/i, cliColor.bold.blackBright('<!DOCTYPE html>'));
             
         }else if (selectors = str.match(/(^|\n)( +)?[\.\:\#\[\]][a-z0-9\-\_\=\(\)\, \[\]]([\s\S]+)?\{/i)) {
             // is probably css
             let css = require('css');
             let obj = css.parse(str, {silent:true});
-            let ruleStr = '';
             let cssResult = '';
             
             if(!obj.parsingErrors){
@@ -96,7 +95,7 @@ module.exports = {
             str = cssResult
                     .replace(/\{/g, cliColor.red('{'))
                     .replace(/\}/g, cliColor.red('}'))
-                    .replace(/\n\nmagenta/g, cliColor.red('\n'))
+                    .replace(/\n\nmagenta/g, cliColor.red('\n'));
         }
         
         return str;

@@ -1,8 +1,8 @@
 
-let stringUtils = require('./stringUtils.js');
+let StringUtils = require('./stringUtils.js');
 
 module.exports = function treatString (str) {    
-    return (new stringUtils(str))
+    return (new StringUtils(str))
         .treatLinks()
         .removeUnusedTags()
         .cleanGarbage()

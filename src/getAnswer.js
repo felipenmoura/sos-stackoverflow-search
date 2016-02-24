@@ -1,6 +1,5 @@
 
 let DOMParser = require('dom-parser');
-let inq = require('inquirer');
 let treatString = require('./treatString.js');
 
 module.exports = function getAnswer (html) {

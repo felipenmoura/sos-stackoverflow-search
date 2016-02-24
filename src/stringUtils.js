@@ -26,7 +26,6 @@ module.exports = function (str) {
     let that = this;
     
     let parser = new DOMParser();
-    let doc = parser.parseFromString(str, "text/html");
     let finalStr = originalValue;
     
     // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -129,7 +128,6 @@ module.exports = function (str) {
     
     // limmiting the length of each line
     this.limitLineLength = function () {
-        let last = 0;
         let curLine;
         let finalResult = '';
         let lines = finalStr.split('\n');
