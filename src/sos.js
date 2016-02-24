@@ -10,9 +10,10 @@ function showQuestions (search) {
             .then(resolve)
             .catch(e=>{
                 console.error('Failed retrieving data!', e);
+                reject(e);
             });
     });
-};
+}
 
 function showAnswer (href) {
     return new Promise((resolve, reject)=>{
@@ -29,7 +30,7 @@ function showAnswer (href) {
             })
             .then(resolve);
     });
-};
+}
 
 module.exports = {
     showQuestions,

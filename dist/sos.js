@@ -9,9 +9,10 @@ function showQuestions(search) {
     return new Promise(function (resolve, reject) {
         goGet(SO + '/search?q=' + search).then(listQuestions).then(resolve)['catch'](function (e) {
             console.error('Failed retrieving data!', e);
+            reject(e);
         });
     });
-};
+}
 
 function showAnswer(href) {
     return new Promise(function (resolve, reject) {
@@ -25,7 +26,7 @@ function showAnswer(href) {
             reject(err);
         }).then(resolve);
     });
-};
+}
 
 module.exports = {
     showQuestions: showQuestions,

@@ -2,9 +2,8 @@ let cliColor = require('cli-color');
 
 module.exports = {
     highlight (str) {
-        let tags = null;
-        let selectors = null;
-        if(tags = str.match(/(\<(\/)?[a-z](([^\>])+)?\>)/ig)) {
+        let tags = str.match(/(\<(\/)?[a-z](([^\>])+)?\>)/ig);
+        if(tags) {
             
             // is probably an html code
             tags.forEach(tag=>{
@@ -40,7 +39,7 @@ module.exports = {
             str = str.replace(/\>/g, cliColor.blueBright('>'));
             str = str.replace(/\<\!DOCTYPE html(.+)?\>(.+)?/i, cliColor.bold.blackBright('<!DOCTYPE html>'));
             
-        }else if (selectors = str.match(/(^|\n)( +)?[\.\:\#\[\]][a-z0-9\-\_\=\(\)\, \[\]]([\s\S]+)?\{/i)) {
+        }else if (str.match(/(^|\n)( +)?[\.\:\#\[\]][a-z0-9\-\_\=\(\)\, \[\]]([\s\S]+)?\{/i)) {
             // is probably css
             let css = require('css');
             let obj = css.parse(str, {silent:true});
@@ -87,7 +86,7 @@ module.exports = {
                     cssResult+= '}';
                     
                     if(i < obj.stylesheet.rules.length){
-                        cssResult += '\n'
+                        cssResult += '\n';
                     }
                     i++;
                 });

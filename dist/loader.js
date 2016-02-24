@@ -15,7 +15,7 @@ function loading(status) {
             curloadingStatus = 0;
         }
         loadingTimer = setTimeout(function (_) {
-            return loading(true);
+            return loading(true, _);
         }, 60);
         cursor.left(99);
     } else {

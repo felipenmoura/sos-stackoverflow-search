@@ -3,7 +3,7 @@ let DOMParser = require('dom-parser');
 let treatString = require('./treatString.js');
 
 module.exports = function getAnswer (html) {
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve){
         let parser = new DOMParser();
         let doc = parser.parseFromString(html, "text/html");
         let ans = doc.getElementsByClassName('accepted-answer')[0]

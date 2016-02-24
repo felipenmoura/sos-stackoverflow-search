@@ -1,4 +1,3 @@
-let DOMParser = require('dom-parser');
 let cardinal = require('cardinal');
 let cliColor = require('cli-color');
 
@@ -25,7 +24,6 @@ module.exports = function (str) {
     let originalValue = str + '';
     let that = this;
     
-    let parser = new DOMParser();
     let finalStr = originalValue;
     
     // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -131,14 +129,13 @@ module.exports = function (str) {
         let curLine;
         let finalResult = '';
         let lines = finalStr.split('\n');
-        let word = '';
         
         lines.forEach(line=>{
             curLine = '';
             let words = line.split(' ');
             let word;
             
-            if (line.replace(/ /g, '') != '') {
+            if (line.replace(/ /g, '') !== '') {
                 while(words[0] !== void(0)){
                     word = words.shift();
                     curLine += word + ' ';
@@ -179,7 +176,7 @@ module.exports = function (str) {
                         linenos: true
                     });
                 }catch(e){
-                    replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''))
+                    replacement = require('./highlighter.js').highlight(cur.replace(/\<(\/)?(code|pre)\>/g, ''));
                     // not able to highlight it...ok, let's go on!
                     replacement = replacement.replace(/\<(\/)?(code|pre)\>/g, '');
                 }
@@ -219,8 +216,8 @@ module.exports = function (str) {
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
         finalStr = finalStr.replace(/\<\/p\>/g, '\n');
-        finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
-        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})?    /g, '|$1$2');
+        finalStr = finalStr.replace(/http\:\/\/\n {4}/g, 'http://');
+        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})? {4}/g, '|$1$2');
         return that;
     };
 

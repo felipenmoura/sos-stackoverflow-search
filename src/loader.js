@@ -23,7 +23,7 @@ function loading (status) {
         if(curloadingStatus >= LOAD_STATUSES.length){
             curloadingStatus= 0;
         }
-        loadingTimer = setTimeout(_=>loading(true), 60);
+        loadingTimer = setTimeout(_=>loading(true, _), 60);
         cursor.left(99);
     }else{
         clearTimeout(loadingTimer);

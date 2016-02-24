@@ -1,6 +1,5 @@
 'use strict';
 
-var DOMParser = require('dom-parser');
 var cardinal = require('cardinal');
 var cliColor = require('cli-color');
 
@@ -17,7 +16,6 @@ module.exports = function (str) {
     var originalValue = str + '';
     var that = this;
 
-    var parser = new DOMParser();
     var finalStr = originalValue;
 
     // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -122,14 +120,13 @@ module.exports = function (str) {
         var curLine = undefined;
         var finalResult = '';
         var lines = finalStr.split('\n');
-        var word = '';
 
         lines.forEach(function (line) {
             curLine = '';
             var words = line.split(' ');
             var word = undefined;
 
-            if (line.replace(/ /g, '') != '') {
+            if (line.replace(/ /g, '') !== '') {
                 while (words[0] !== void 0) {
                     word = words.shift();
                     curLine += word + ' ';
@@ -208,8 +205,8 @@ module.exports = function (str) {
         finalStr = finalStr.replace(/\t|\r/g, '');
         finalStr = finalStr.replace(/\n\n/g, '\n');
         finalStr = finalStr.replace(/\<\/p\>/g, '\n');
-        finalStr = finalStr.replace(/http\:\/\/\n    /g, 'http://');
-        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})?    /g, '|$1$2');
+        finalStr = finalStr.replace(/http\:\/\/\n {4}/g, 'http://');
+        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})? {2,8}/g, '|$1$2');
         return that;
     };
 
