@@ -5,13 +5,17 @@
 <a href="https://www.npmjs.com/package/so-search">
     <img src="https://img.shields.io/npm/v/so-search.svg"
          alt="npm version">
-</a><img src="https://img.shields.io/travis/felipenmoura/sos-stackoverflow-search.svg"
-         alt="Travis Build" style="float: left; margin-right: 5px;"><a href="https://github.com/issues/felipenmoura/sos-stackoverflow-search/issues" style="float: left; margin-right: 5px;">
+</a>
+<img src="https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg"
+         alt="License">
+<img src="https://img.shields.io/travis/felipenmoura/sos-stackoverflow-search.svg"
+         alt="Travis Build" style="float: left; margin-right: 5px;">
+<a href="https://github.com/issues/felipenmoura/sos-stackoverflow-search/issues" style="float: left; margin-right: 5px;">
     <img src="https://img.shields.io/github/issues/felipenmoura/sos-stackoverflow-search.svg"
              alt="Open Issues">
-</a><img src="https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg"
-         alt="License">
 </a>
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/96b7db1e3c5d49d98295b6f450050602)](https://www.codacy.com/app/felipenmoura/sos-stackoverflow-search)
+
 
 This is a terminal tool for you to search for answers in [http://stackoverflow.com/](stackoverflow) never leaving your natural habitat!
 
@@ -23,6 +27,8 @@ Let's say you are facing a problem rendering an HTML5 canvas!
 `$ sos error rendering html5 canvas`
 
 Anything you pass after the `sos` command, will be treated as your question.
+
+![SOS Stackoverflow Search in terminal](https://raw.githubusercontent.com/felipenmoura/sos-stackoverflow-search/master/sos-screen-recording.gif)
 
 #### Advantages
 
