@@ -4,17 +4,11 @@
 <a href="https://www.npmjs.com/package/so-search" style="float: left; margin-right: 5px;">
     <img src="https://img.shields.io/npm/v/so-search.svg"
          alt="npm version">
-</a>
-
-<img src="https://img.shields.io/travis/felipenmoura/sos-stackoverflow-search.svg"
-         alt="Travis Build" style="float: left; margin-right: 5px;">
-
-<a href="https://github.com/felipenmoura/sos-stackoverflow-search/issues" style="float: left; margin-right: 5px;">
+</a><img src="https://img.shields.io/travis/felipenmoura/sos-stackoverflow-search.svg"
+         alt="Travis Build" style="float: left; margin-right: 5px;"><a href="https://github.com/issues/felipenmoura/sos-stackoverflow-search/issues" style="float: left; margin-right: 5px;">
     <img src="https://img.shields.io/github/issues/felipenmoura/sos-stackoverflow-search.svg"
              alt="Open Issues">
-</a>
-
-<img src="https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg"
+</a><img src="https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg"
          alt="License">
          
 https://img.shields.io/github/license/felipenmoura/sos-stackoverflow-search.svg
