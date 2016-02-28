@@ -35,7 +35,7 @@ Anything you pass after the `sos` command, will be treated as your question.
 
 - straight in your terminal
 - don't need to open another tab in your browser
-- highlights code (if it is a valid javascript code)
+- highlights code (valid javascript codes, css and html)
 - takes in consideration italic, bold, links, lists and blockquotes
 - shows only questions that have a correct answer
 - shows the answer itself in the terminal
