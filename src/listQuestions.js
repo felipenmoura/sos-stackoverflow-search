@@ -8,10 +8,10 @@ module.exports = function listQuestions (html) {
         let doc = parser.parseFromString(html, "text/html");
         let opts = {}, qOpts = [];
         let i = 0;
-        let link, answered, cur, linkText;
+        let link, answered, cur, linkText, formattedQuestion;
         let limit = 9;
         let qList = [].slice.call(doc.getElementsByClassName('question-summary search-result'));
-        
+
         for (i=0; i<qList.length; i++) {
             cur = qList[i];
             link = cur.getElementsByTagName('a')[0];
@@ -22,18 +22,18 @@ module.exports = function listQuestions (html) {
             }
 
             linkText = (1 + qOpts.length) + ')' + link.innerHTML.replace(/\r|\n|/g, '').replace(/^ Q: /, '');
+            formattedQuestion = linkText.replace(/\&amp\;/g, '&')
+                    .replace(/\&\#39\;/g, "'")
+                    .substring(0, 80)
 
-            opts[linkText] = link.getAttribute('href');
-            qOpts.push(linkText
-                        .replace(/\&amp\;/g, '&')
-                        .replace(/\&\#39\;/g, "'")
-                        .substring(0, 80));
-            
+            opts[formattedQuestion] = link.getAttribute('href');
+            qOpts.push(formattedQuestion);
+
             if(qOpts.length >= limit){
                 break;
             }
         }
-        
+
         if(qOpts.length){
             inq.prompt([
                     {
@@ -52,4 +52,3 @@ module.exports = function listQuestions (html) {
         }
     });
 };
-

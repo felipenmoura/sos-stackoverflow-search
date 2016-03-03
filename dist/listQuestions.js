@@ -13,7 +13,8 @@ module.exports = function listQuestions(html) {
         var link = undefined,
             answered = undefined,
             cur = undefined,
-            linkText = undefined;
+            linkText = undefined,
+            formattedQuestion = undefined;
         var limit = 9;
         var qList = [].slice.call(doc.getElementsByClassName('question-summary search-result'));
 
@@ -27,9 +28,10 @@ module.exports = function listQuestions(html) {
             }
 
             linkText = 1 + qOpts.length + ')' + link.innerHTML.replace(/\r|\n|/g, '').replace(/^ Q: /, '');
+            formattedQuestion = linkText.replace(/\&amp\;/g, '&').replace(/\&\#39\;/g, "'").substring(0, 80);
 
-            opts[linkText] = link.getAttribute('href');
-            qOpts.push(linkText.replace(/\&amp\;/g, '&').replace(/\&\#39\;/g, "'").substring(0, 80));
+            opts[formattedQuestion] = link.getAttribute('href');
+            qOpts.push(formattedQuestion);
 
             if (qOpts.length >= limit) {
                 break;
