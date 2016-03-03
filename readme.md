@@ -18,7 +18,7 @@
              alt="Code quality">
 
 
-This is a terminal tool for you to search for answers in [http://stackoverflow.com/](stackoverflow) never leaving your natural habitat!
+This is a terminal tool for you to search for answers in [stackoverflow](http://stackoverflow.com/) never leaving your natural habitat!
 
 #### How to use it
 
