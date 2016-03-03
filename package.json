@@ -1,6 +1,6 @@
 {
   "name": "so-search",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "StackOverflow Search",
   "bin": {
     "sos": "./index.js"
@@ -23,6 +23,11 @@
     "repl",
     "cli",
     "command-line",
+    "terminal",
+    "console",
+    "syntax highlight",
+    "answer",
+    "question",
     "help"
   ],
   "author": "felipenmoura",
