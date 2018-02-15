@@ -206,7 +206,7 @@ module.exports = function (str) {
         finalStr = finalStr.replace(/\n\n/g, '\n');
         finalStr = finalStr.replace(/\<\/p\>/g, '\n');
         finalStr = finalStr.replace(/http\:\/\/\n {4}/g, 'http://');
-        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})? {2,8}/g, '|$1$2');
+        finalStr = finalStr.replace(/\|(.+)?([0-9]{1,3})? {4}/g, '|$1$2');
         return that;
     };
 

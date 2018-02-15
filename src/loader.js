@@ -29,7 +29,7 @@ function loading (status) {
         clearTimeout(loadingTimer);
         curloadingStatus = 0;
         cursor.left(99);
-        process.stdout.write(' '.repeate(20));
+        process.stdout.write(' '.repeat(20));
         cursor.left(99);
     }
 }
